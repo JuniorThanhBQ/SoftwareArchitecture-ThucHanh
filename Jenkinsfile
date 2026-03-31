@@ -20,14 +20,14 @@ pipeline {
                     reuseNode true
                 }
             }
-        }
 
-        steps {
-            sh 'node -v && npm -v'
-            sh 'npm ci'
-            sh 'npm run lint'
-            sh 'npm run build' 
-        }
+            steps {
+                sh 'node -v && npm -v'
+                sh 'npm ci'
+                sh 'npm run lint'
+                sh 'npm run build' 
+            }
+        }        
     }
 
     post {
