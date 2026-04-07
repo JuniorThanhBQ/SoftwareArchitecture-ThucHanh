@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: ou-rabbitmq
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
+    listener:
+      simple:
+        prefetch: 1
+
+lab:
+ rabbit:
+  direct-severities:
+    - error
+    - warning
+  topic-patterns: order.*  
