@@ -3,7 +3,7 @@ package vn.edu.ou.rabbitmq.publisher;
 import java.time.Instant;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.amqp.core.MessageDeliveryMode;
@@ -36,24 +36,24 @@ public class LabMessagePublisher {
         }
     }
 
-    public void publishFanout(NotificationPayload payload) throws JsonProcessingException {
+    public void publishFanout(NotificationPayload payload) throws JacksonException {
         String json = objectMapper.writeValueAsString(payload);
         rabbitTemplate.convertAndSend(LabRabbitConfigs.EX_NOTIFICATIONS, "", json);
     }
 
-    public void publishFanoutDefaultMaintenance() throws JsonProcessingException {
+    public void publishFanoutDefaultMaintenance() throws JacksonException {
         publishFanout(new NotificationPayload(
                 "notification",
                 "System maintenance at 10:00 PM",
                 Instant.now()));
     }
 
-    public void publishTopic(String routingKey, Map<String, Object> body) throws JsonProcessingException {
+    public void publishTopic(String routingKey, Map<String, Object> body) throws JacksonException {
         String json = objectMapper.writeValueAsString(body);
         rabbitTemplate.convertAndSend(LabRabbitConfigs.EX_TOPIC_ORDERS, routingKey, json);
     }
 
-    public void sendTask(TaskPayload task) throws JsonProcessingException {
+    public void sendTask(TaskPayload task) throws JacksonException {
         String json = objectMapper.writeValueAsString(task);
         rabbitTemplate.convertAndSend("", LabRabbitConfigs.Q_TASK_QUEUE, json, message -> {
             message.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);

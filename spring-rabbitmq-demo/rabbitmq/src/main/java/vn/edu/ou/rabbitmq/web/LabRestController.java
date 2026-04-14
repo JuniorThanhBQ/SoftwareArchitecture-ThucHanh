@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JacksonException;
 
 import jakarta.validation.constraints.NotBlank;
 
@@ -21,7 +21,7 @@ import vn.edu.ou.rabbitmq.dto.TaskPayload;
 import vn.edu.ou.rabbitmq.publisher.LabMessagePublisher;
 
 @RestController
-@RequestMapping("/api/rabbitmq")
+@RequestMapping("/api/lab")
 public class LabRestController {
 
     private final LabMessagePublisher publisher;
@@ -49,7 +49,7 @@ public class LabRestController {
 
     @PostMapping("/fanout")
     public ResponseEntity<Map<String, String>> publishFanout(
-            @RequestBody(required = false) NotificationPayload payload) throws JsonProcessingException {
+            @RequestBody(required = false) NotificationPayload payload) throws JacksonException {
         if (payload == null) {
             publisher.publishFanoutDefaultMaintenance();
         } else {
@@ -61,13 +61,13 @@ public class LabRestController {
     @PostMapping("/topic")
     public ResponseEntity<Map<String, Object>> publishTopic(
             @RequestParam @NotBlank String routingKey,
-            @RequestBody Map<String, Object> body) throws JsonProcessingException {
+            @RequestBody Map<String, Object> body) throws JacksonException {
         publisher.publishTopic(routingKey, body);
         return ResponseEntity.ok(Map.of("exchange", "topic_orders", "routingKey", routingKey));
     }
 
     @PostMapping("/tasks/demo")
-    public ResponseEntity<Map<String, Object>> publishTasksDemo() throws JsonProcessingException {
+    public ResponseEntity<Map<String, Object>> publishTasksDemo() throws JacksonException {
         List<TaskPayload> tasks = List.of(
                 new TaskPayload(1, "email", Map.of("to", "user@example.com")),
                 new TaskPayload(2, "resize", Map.of("image", "photo.jpg")),
@@ -80,7 +80,7 @@ public class LabRestController {
 
     @PostMapping("/tasks")
     public ResponseEntity<Map<String, Object>> publishTask(@RequestBody TaskPayload task)
-            throws JsonProcessingException {
+            throws JacksonException {
         publisher.sendTask(task);
         return ResponseEntity.ok(new LinkedHashMap<>(Map.of("queue", "task_queue", "id", task.id())));
     }
